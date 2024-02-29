@@ -1,6 +1,6 @@
 node_modules
 *lock*
-.env
+*.env
 
 # Logs
 logs
