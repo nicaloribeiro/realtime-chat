@@ -1,4 +1,4 @@
-import mongoose from "../config/database.js";
+import mongoose from "../config/mongo.js";
 const { Schema } = mongoose;
 
 const UserSchema = new Schema({
