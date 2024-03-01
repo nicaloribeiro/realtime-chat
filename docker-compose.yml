@@ -1,17 +1,19 @@
 version: "3.8"
 services:
-
   server:
     container_name: realtime-chat-server
     build:
       context: ./server
       dockerfile: Dockerfile
     ports:
-      - ${PORT}:${PORT}
+      - "${PORT}:${PORT}"
     env_file:
-      - .server.env
+      - .env
     environment:
       - PORT=${PORT}
+    networks:
+      - api-network
+      - db-network
     depends_on:
       - database
 
@@ -19,15 +21,15 @@ services:
     container_name: realtime-chat-database
     image: mongo
     ports:
-      - ${PORT}
+      - "${DB_PORT}:${DB_PORT}"
     networks:
       - db-network
     volumes:
       - mongo-data:/data/db
     env_file:
-      - .db.env
+      - .env
     environment:
-      - PORT=${PORT}
+      - DB_PORT=${DB_PORT}
 
 networks:
   api-network:
