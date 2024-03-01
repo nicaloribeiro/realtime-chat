@@ -11,11 +11,14 @@ services:
       - .env
     environment:
       - PORT=${PORT}
+      - REDIS_URL=${REDIS_URL}
     networks:
       - api-network
       - db-network
+      - redis-network
     depends_on:
       - database
+      - cache
 
   database:
     container_name: realtime-chat-database
@@ -28,13 +31,21 @@ services:
       - mongo-data:/data/db
     env_file:
       - .env
-    environment:
-      - DB_PORT=${DB_PORT}
+
+  cache:
+    container_name: realtime-chat-cache
+    image: redis:latest
+    restart: always
+    command: redis-server --save
+    networks:
+      - redis-network
 
 networks:
   api-network:
     driver: bridge
   db-network:
+    driver: bridge
+  redis-network:
     driver: bridge
 
 volumes:
