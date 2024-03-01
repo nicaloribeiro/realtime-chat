@@ -2,6 +2,7 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
+import UserRouter from "./user/user-routes.js";
 
 const port = process.env.PORT;
 const app = express();
@@ -15,13 +16,11 @@ const socket = new Server(server, {
 app.use(express.json());
 app.use(cors());
 
-app.get("/api", (req, res) => {
-  res.send("Hello World");
-});
+app.use("/api/account", UserRouter);
 
 socket.on("connection", (socket) => {
   console.log("a user connected");
-  console.log(socket.id)
+  console.log(socket.id);
   socket.on("disconnect", function () {
     console.log("user disconnected");
   });
