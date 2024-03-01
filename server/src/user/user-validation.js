@@ -13,5 +13,10 @@ const findUser = Joi.object({
   username: Joi.string(),
 });
 
-const UserValidate = { createUser, findUser };
+const login = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});
+
+const UserValidate = { createUser, findUser, login };
 export default UserValidate;

@@ -1,4 +1,6 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import encrypt from "../config/encrypt.js";
 import UserRepository from "./user-respository.js";
 
 export const create = async (user) => {
@@ -18,5 +20,25 @@ export const create = async (user) => {
   });
 };
 
-const UserService = { create };
+export const login = async (credentials) => {
+  const { email, password } = credentials;
+  const user = await UserRepository.findOne({ email });
+
+  if (!Boolean(user)) throw new Error("Invalid credentials.");
+
+  if (!(await bcrypt.compare(password, user.password)))
+    throw new Error("Invalid credentials.");
+
+  const token = jwt.sign(
+    { email: user.email, name: user.name },
+    encrypt.secret,
+    {
+      expiresIn: 86400,
+    }
+  );
+
+  return token;
+};
+
+const UserService = { create, login };
 export default UserService;
