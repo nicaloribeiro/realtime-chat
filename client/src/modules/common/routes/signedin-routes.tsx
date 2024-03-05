@@ -1,9 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
+import Logout from "../components/Logout/Logout";
 
 const signedInRouter = createBrowserRouter([
   {
     path: "/",
-    element: <h1>Signed in </h1>,
+    element: <Logout />,
+    children: []
   },
   {
     path: "/*",
