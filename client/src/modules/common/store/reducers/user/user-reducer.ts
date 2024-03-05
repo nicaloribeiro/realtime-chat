@@ -25,9 +25,7 @@ const getUserInfoFromJwt = (jwt: string): User => {
 export const getUserInLocalStorage = createAsyncThunk(
   "user/getLocalStorage",
   (): User => {
-    console.log('entrou aq')
     const token = localStorage.getItem("access_token");
-    console.log('token', token)
     if (!token) {
       return initialState.user;
     }
@@ -40,12 +38,16 @@ export const login = createAsyncThunk(
   async (payload: LoginInput): Promise<User> => {
     const { email, password } = payload;
     const data = await UserService.login(email, password);
-    const { authorization } = data
-    localStorage.setItem('access_token', authorization)
+    const { authorization } = data;
+    localStorage.setItem("access_token", authorization);
     const user = getUserInfoFromJwt(authorization);
     return user;
   }
 );
+
+export const logout = createAsyncThunk("user/logout", async () => {
+  localStorage.removeItem("access_token");
+});
 
 const userSlice = createSlice({
   name: "user",
@@ -71,6 +73,9 @@ const userSlice = createSlice({
         const user = action.payload;
         state.user = user;
         state.loading = false;
+      })
+      .addCase(logout.fulfilled, () => {
+        return initialState;
       });
   },
 });

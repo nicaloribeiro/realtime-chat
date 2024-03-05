@@ -6,3 +6,8 @@ export type LoginInput = {
 export type LoginOutput = {
   authorization: string;
 };
+
+export type DecodedToken = {
+  iat: number;
+  exp: number;
+};
