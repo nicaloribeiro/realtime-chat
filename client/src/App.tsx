@@ -1,4 +1,3 @@
-import "./App.css";
 import { useSelector } from "react-redux";
 import { RootState } from "./modules/common/store/reducers";
 import { SignedInRoutes, SignedOutRoutes } from "./modules/common/routes";
