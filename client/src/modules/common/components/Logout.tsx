@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
-import { logout } from "../../store/reducers/user/user-reducer";
-import { AppDispatch } from "../../store";
+import { logout } from "../store/reducers/user/user-reducer";
+import { AppDispatch } from "../store";
 
 const Logout = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -11,7 +11,7 @@ const Logout = () => {
 
   return (
     <button className="text-green-200" onClick={() => handleLogout()}>
-      Logoout
+      Logout
     </button>
   );
 };
