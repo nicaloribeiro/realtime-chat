@@ -8,6 +8,7 @@ import {
 } from "../../../types/login-types";
 import UserService from "../../../services/user-service";
 import { toast } from "react-toastify";
+import { socket } from "../../../../../config/socket";
 
 const initialState: UserInitialState = {
   user: {
@@ -51,6 +52,7 @@ export const login = createAsyncThunk(
 );
 
 export const logout = createAsyncThunk("user/logout", async () => {
+  socket.disconnect();
   localStorage.removeItem("access_token");
 });
 
@@ -61,12 +63,27 @@ export const register = createAsyncThunk(
   }
 );
 
+export const socketConnect = createAsyncThunk("user/socket-connect", () => {
+  socket.connect();
+});
+
+export const socketDisconnect = createAsyncThunk(
+  "user/socket-disconnect",
+  () => {
+    socket.disconnect();
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
     setSocketId: (state, action) => {
       state.user.socketId = action.payload.socketId;
+      socket.emit("user-online-data", {
+        email: state.user.email,
+        socketId: state.user.socketId,
+      });
     },
   },
   extraReducers: (builder) => {
@@ -100,8 +117,29 @@ const userSlice = createSlice({
       .addCase(register.fulfilled, (state) => {
         state.loading = false;
         toast.success("Registration completed!");
+      })
+      .addCase(socketConnect.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(socketConnect.rejected, (state) => {
+        state.loading = false;
+        toast.error("Error on chat connection. Try again later.");
+      })
+      .addCase(socketConnect.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(socketDisconnect.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(socketDisconnect.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(socketDisconnect.fulfilled, (state) => {
+        state.loading = false;
+        state.user.socketId = null;
       });
   },
 });
 
 export default userSlice.reducer;
+export const { setSocketId } = userSlice.actions;
