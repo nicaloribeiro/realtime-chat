@@ -1,5 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-import Logout from "../components/Logout";
 import SignedInLayout from "../../layouts/SignedInLayout";
 
 const signedInRouter = createBrowserRouter([
@@ -9,7 +8,7 @@ const signedInRouter = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Logout />,
+        element: <h1>Soon</h1>,
       },
       {
         path: "/*",
