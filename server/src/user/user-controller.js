@@ -52,5 +52,19 @@ const login = async (req, res) => {
   }
 };
 
-const UserController = { create, login };
+const findUserByTerm = async (req, res) => {
+  try {
+    const { user } = req;
+    const { searchTerm } = req.params;
+    const users = await UserService.findUserByTerm(searchTerm, user);
+    res.status(201).send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      message: "Error to find users.",
+    });
+  }
+};
+
+const UserController = { create, login, findUserByTerm };
 export default UserController;

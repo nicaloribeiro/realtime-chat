@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import encrypt from "../config/encrypt.js";
 import UserRepository from "./user-respository.js";
 
-export const create = async (user) => {
+const create = async (user) => {
   const { email, name, password, username } = user;
   const hashedPassword = await bcrypt.hash(password, 12);
   const emailAlreadyExists = Boolean(await UserRepository.findOne({ email }));
@@ -20,7 +20,7 @@ export const create = async (user) => {
   });
 };
 
-export const login = async (credentials) => {
+const login = async (credentials) => {
   const { email, password } = credentials;
   const user = await UserRepository.findOne({ email });
 
@@ -40,5 +40,42 @@ export const login = async (credentials) => {
   return token;
 };
 
-const UserService = { create, login };
+const findUserByTerm = async (searchTerm, user) => {
+  const { email } = user;
+  const userFound = await UserRepository.findOne({ email });
+  if (!Boolean(userFound)) {
+    throw new Error("Requiring user not found.");
+  }
+  const { _id: userFoundId } = userFound;
+  const query = {
+    _id: { $ne: userFoundId },
+    blockList: { $nin: [userFoundId.toString()] },
+    $or: [
+      { name: { $regex: searchTerm, $options: "i" } },
+      { username: { $regex: searchTerm, $options: "i" } },
+      { email: { $regex: searchTerm, $options: "i" } },
+    ],
+  };
+  const users = await UserRepository.find(query);
+
+  const formattedUsers = users.map((user) => {
+    const data = {
+      email: user.email,
+      name: user.name,
+      friendRequestSent: false,
+      isFriend: false,
+    };
+    if (user.friendRequest.includes(userFoundId)) {
+      data.friendRequestSent = true;
+    }
+    if (user.friendList.includes(userFoundId)) {
+      data.isFriend = true;
+    }
+    return data;
+  });
+
+  return formattedUsers;
+};
+
+const UserService = { create, login, findUserByTerm };
 export default UserService;
