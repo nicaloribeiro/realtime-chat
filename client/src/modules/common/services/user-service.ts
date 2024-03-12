@@ -4,6 +4,7 @@ import {
   RegisterInput,
   RegisterOutput,
 } from "../types/login-types";
+import { UsersFound } from "../types/user-types";
 
 const login = async (email: string, password: string): Promise<LoginOutput> => {
   const { data } = await api.post<LoginOutput>("/api/account/login", {
@@ -21,5 +22,10 @@ const register = async (payload: RegisterInput): Promise<RegisterOutput> => {
   return data;
 };
 
-const UserService = { login, register };
+const findUser = async (searchTerm: string): Promise<UsersFound[]> => {
+  const { data } = await api.get<UsersFound[]>(`/api/user/find/${searchTerm}`);
+  return data;
+};
+
+const UserService = { login, register, findUser };
 export default UserService;
