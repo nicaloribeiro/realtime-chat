@@ -2,8 +2,9 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import UserRouter from "./user/user-routes.js";
+import { AccountRouter, UserRouter } from "./user/user-routes.js";
 import CacheService from "./cache/cache-serivce.js";
+import { verifyJwt } from "./middlewares/jwt-validation-middleware.js";
 
 const port = process.env.PORT;
 const app = express();
@@ -17,7 +18,8 @@ export const socket = new Server(server, {
 app.use(express.json());
 app.use(cors());
 
-app.use("/api/account", UserRouter);
+app.use("/api/account", AccountRouter);
+app.use("/api/user", verifyJwt, UserRouter);
 
 socket.on("connection", (socket) => {
   console.log("A user connected. Socket Id: ", socket.id);
