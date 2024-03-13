@@ -4,3 +4,8 @@ export type UsersFound = {
   friendRequestSent: boolean;
   isFriend: boolean;
 };
+
+export type UserSocketConnection = {
+    email: string
+    name: string
+}
