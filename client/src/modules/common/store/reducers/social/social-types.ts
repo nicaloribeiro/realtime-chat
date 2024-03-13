@@ -5,4 +5,5 @@ export type SocialInitialState = {
   onlineFriends: UserSocketConnection[];
   friendList: []
   loading: boolean;
+  hasSearched: boolean
 };
