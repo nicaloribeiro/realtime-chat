@@ -1,11 +1,7 @@
 import { Formik } from "formik";
 import { LoginInput } from "../common/types/login-types";
 import { useDispatch } from "react-redux";
-import { useLayoutEffect } from "react";
-import {
-  getUserInLocalStorage,
-  login,
-} from "../common/store/reducers/user/user-reducer";
+import { login } from "../common/store/reducers/user/user-reducer";
 import { AppDispatch } from "../common/store";
 import Input from "../common/components/Input";
 import { Link } from "react-router-dom";
@@ -15,10 +11,6 @@ import { toast } from "react-toastify";
 
 const Login = () => {
   const dispatch: AppDispatch = useDispatch();
-
-  useLayoutEffect(() => {
-    dispatch(getUserInLocalStorage());
-  }, [dispatch]);
 
   const handleSubmitForm = async (data: LoginInput) => {
     await dispatch(login(data));
