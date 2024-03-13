@@ -62,6 +62,7 @@ const findUserByTerm = async (searchTerm, user) => {
     const data = {
       email: user.email,
       name: user.name,
+      username: user.username,
       friendRequestSent: false,
       isFriend: false,
     };
