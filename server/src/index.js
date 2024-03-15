@@ -5,6 +5,7 @@ import cors from "cors";
 import { AccountRouter, UserRouter } from "./user/user-routes.js";
 import CacheService from "./cache/cache-serivce.js";
 import { verifyJwt } from "./middlewares/jwt-validation-middleware.js";
+import { ChatRouter } from "./chat/chat-routes.js";
 
 const port = process.env.PORT;
 const app = express();
@@ -20,6 +21,7 @@ app.use(cors());
 
 app.use("/api/account", AccountRouter);
 app.use("/api/user", verifyJwt, UserRouter);
+app.use("/api/chat", verifyJwt, ChatRouter);
 
 socket.on("connection", (socket) => {
   console.log("A user connected. Socket Id: ", socket.id);
