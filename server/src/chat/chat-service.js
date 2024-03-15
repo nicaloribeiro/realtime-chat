@@ -4,6 +4,10 @@ import ChatRepository from "./chat-repository.js";
 const create = async (usersEmail) => {
   const users = await UserRepository.find({ email: { $in: usersEmail } });
   
+  if (!usersAreFriends(users)) {
+    throw new Error("Users are not friends.");
+  }
+
   const participants = users.map((user) => ({
     userId: user._id.toString(),
     email: user.email,
@@ -26,6 +30,15 @@ const findChatsByUser = async (userEmail) => {
   });
 
   return userChats;
+};
+
+const usersAreFriends = (users) => {
+  return users.every((user) =>
+    users.every(
+      (friend) =>
+        user._id === friend._id || user.friendList.includes(friend._id)
+    )
+  );
 };
 
 const ChatService = { create, findChatsByUser };
