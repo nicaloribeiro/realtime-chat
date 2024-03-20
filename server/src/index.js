@@ -6,6 +6,7 @@ import { AccountRouter, UserRouter } from "./user/user-routes.js";
 import CacheService from "./cache/cache-serivce.js";
 import { verifyJwt } from "./middlewares/jwt-validation-middleware.js";
 import { ChatRouter } from "./chat/chat-routes.js";
+import { messageQueue } from "./config/bullmq.js";
 
 const port = process.env.PORT;
 const app = express();
@@ -23,8 +24,16 @@ app.use("/api/account", AccountRouter);
 app.use("/api/user", verifyJwt, UserRouter);
 app.use("/api/chat", verifyJwt, ChatRouter);
 
-socket.on("connection", (socket) => {
+socket.on("connection", async (socket) => {
   console.log("A user connected. Socket Id: ", socket.id);
+  await messageQueue
+    .add("messageQueue", { message: "Mensagem enviada via WebSocket" })
+    .then(() => {
+      console.log("Job adicionado à fila do BullMQ");
+    })
+    .catch((error) => {
+      console.error("Erro ao adicionar job ao BullMQ:", error);
+    });
 
   socket.emit("user-connected", { socketId: socket.id });
 

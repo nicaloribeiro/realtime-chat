@@ -1,24 +1,27 @@
 import { Queue, Worker } from "bullmq";
-import { createClient } from "redis";
+import { client } from "./redis.js";
+import IORedis from "ioredis";
 
-export const connection = createClient({
-  url: process.env.REDIS_URL,
+const ioRedisClient = new IORedis(client.options.url, {
+  maxRetriesPerRequest: null,
 });
 
-export const messageQueue = new Queue("messageQueue", { connection });
+export const messageQueue = new Queue("messageQueue", {
+  connection: ioRedisClient,
+});
 
 const processMessage = async (job) => {
   console.log("Processing message:", job.data.message);
 };
 
 const messageWorker = new Worker("messageQueue", processMessage, {
-  connection: client,
+  connection: ioRedisClient,
 });
 
 messageWorker.on("completed", (job) => {
-  console.log(`Job ${job.id} completado com sucesso`);
+  console.log(`Job ${job.id} completed.`);
 });
 
 messageWorker.on("failed", (job, err) => {
-  console.error(`Job ${job.id} falhou com erro:`, err);
+  console.error(`Job ${job.id} failed.`, err);
 });
